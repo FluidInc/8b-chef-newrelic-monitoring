@@ -66,15 +66,15 @@ end
 execute "kill old new relic server agent" do
   # This is a clean-up task that will handle a newrelic-sysmond
   # with its pid file in a non-standard location
-  command "kill `cat /var/run/nrsysmond.pid`"
+  command "kill `cat /var/run/nrsysmond.pid` && rm /var/run/nrsysmond.pid"
   action :nothing
   only_if do File.exist?("/var/run/nrsysmond.pid") end
 end
 
 directory "/var/run/newrelic" do
   recursive true
-  owner "root"
-  group "root"
+  owner "newrelic"
+  group "newrelic"
   notifies :run, "execute[kill old new relic server agent]", :immediately
 end
 
