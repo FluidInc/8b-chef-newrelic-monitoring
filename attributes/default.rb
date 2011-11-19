@@ -18,3 +18,6 @@
 #
 
 default['newrelic']['license_key'] = "SET_THIS"
+
+default['newrelic']['monit']['max_memory'] = "32"
+default['newrelic']['monit']['max_cpu'] = "20"
