@@ -25,7 +25,7 @@ service_path = `which service`.strip
 template "/etc/monit.d/newrelic_sysmond" do
   source "monit_newrelic_sysmond.erb"
   variables(
-    :pid_file => "/var/run/nrsysmond.pid",
+    :pid_file => "/var/run/newrelic/nrsysmond.pid",
     :start_program => "#{service_path} newrelic-sysmond start",
     :stop_program => "#{service_path} newrelic-sysmond stop",
     :max_memory => node[:newrelic][:monit][:max_memory],

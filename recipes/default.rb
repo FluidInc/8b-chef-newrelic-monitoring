@@ -63,6 +63,12 @@ when "redhat", "centos", "fedora"
 
 end
 
+directory "/var/run/newrelic" do
+  recursive true
+  owner "root"
+  group "root"
+end
+
 # step 3
 execute "nrsysmond-config" do
   command "nrsysmond-config --set license_key=#{node[:newrelic][:license_key]}"
