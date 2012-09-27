@@ -21,6 +21,11 @@ case node['platform']
 when 'ubuntu', 'debian'
 
   # step 1
+  execute "apt-key" do
+    command "wget -O- http://download.newrelic.com/548C16BF.gpg | apt-key add -"
+    action :nothing
+  end
+
   execute "apt-get-update" do
     command "apt-get update"
     action :nothing
@@ -31,13 +36,13 @@ when 'ubuntu', 'debian'
     owner "root"
     group "root"
     mode 0640
+    notifies :run, "execute[apt-key]", :immediately
     notifies :run, "execute[apt-get-update]", :immediately
   end
 
   # step 2
   package "newrelic-sysmond" do
     action :upgrade
-    options "--allow-unauthenticated"
   end
 
 when "redhat", "centos", "fedora"
@@ -72,5 +77,5 @@ end
 # step 4
 service "newrelic-sysmond" do
   supports :restart => true, :status => true
-  action [:enable, :start]  
+  action [:enable, :start]
 end
