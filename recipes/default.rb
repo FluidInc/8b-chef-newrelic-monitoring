@@ -23,7 +23,7 @@ when 'ubuntu', 'debian'
   # step 1
   execute "apt-key" do
     command "wget -O- http://download.newrelic.com/548C16BF.gpg | apt-key add -"
-    action :nothing
+    not_if "gpg --keyring /etc/apt/trusted.gpg --list-keys | grep '1024D/548C16BF'"
   end
 
   execute "apt-get-update" do
@@ -36,7 +36,6 @@ when 'ubuntu', 'debian'
     owner "root"
     group "root"
     mode 0640
-    notifies :run, "execute[apt-key]", :immediately
     notifies :run, "execute[apt-get-update]", :immediately
   end
 
