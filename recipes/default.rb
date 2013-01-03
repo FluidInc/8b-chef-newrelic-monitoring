@@ -17,8 +17,8 @@
 # limitations under the License.
 #
 
-case node['platform']
-when 'ubuntu', 'debian'
+case node.platform_family
+when 'debian'
 
   # step 1
   execute "apt-get-update" do
@@ -40,18 +40,18 @@ when 'ubuntu', 'debian'
     options "--allow-unauthenticated"
   end
 
-when "redhat", "centos", "fedora"
+when 'rhel','fedora'
 
   # step 1
-  repo_rpm = "http://download.newrelic.com/pub/newrelic/el5/i386/newrelic-repo-5-3.noarch.rpm"
+  rpm = "newrelic-repo-5-3.noarch.rpm"
 
-  remote_file "#{Chef::Config[:file_cache_path]}/#{repo_rpm}" do
-    source "http://download.newrelic.com/pub/newrelic/el5/i386/#{repo_rpm}"
+  remote_file "#{Chef::Config[:file_cache_path]}/#{rpm}" do
+    source "http://download.newrelic.com/pub/newrelic/el5/#{node.kernel.machine}/#{rpm}"
     mode 0644
   end
 
   package "newrelic-repo" do
-    source "#{Chef::Config[:file_cache_path]}/#{repo_rpm}"
+    source "#{Chef::Config[:file_cache_path]}/#{rpm}"
     action :install
     provider Chef::Provider::Package::Rpm
   end
@@ -65,12 +65,12 @@ end
 
 # step 3
 execute "nrsysmond-config" do
-  command "nrsysmond-config --set license_key=#{node[:newrelic][:license_key]}"
+  command "nrsysmond-config --set license_key=#{node.newrelic.license_key}"
   action :run
 end
 
 # step 4
 service "newrelic-sysmond" do
   supports :restart => true, :status => true
-  action [:enable, :start]  
+  action [:enable, :start]
 end
